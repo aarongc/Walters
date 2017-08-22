@@ -28,11 +28,69 @@ namespace Walters
             InitializeComponent();
             SearchAdobeApps();
         }
+        private IDictionary<string, string> AdobeApps { get; set; }
+        private string AdobeRoamingDirectory
+        {
+            get
+            {
+                return string.Concat(GetPath(Environment.SpecialFolder.ApplicationData), @"\Adobe\");
+            }
+        }
+        private string ApplicationName { get; set; }
+        private string BaseDirectory { get; set; }
+        private string ColorProfile
+        {
+            get
+            {
+                return "GRACoL2006_Coated1v2.icc";
+            }
+        }
+        private string ColorProfilePath
+        {
+            get
+            {
+                return string.Concat(Environment.SystemDirectory, @"\spool\drivers\color\", ColorProfile);
+            }
+        }
+        private string ColorSettings
+        {
+            get
+            {
+                return "Book_ColorSettings.csf";
+            }
+        }        
+        private string ColorSettingsPath
+        {
+            get
+            {
+                return string.Concat(AdobeRoamingDirectory, @"Color\Settings\", ColorSettings);
+            }
+        }
+        public bool Installed { get; set; }
+        private string PDFPreset
+        {
+            get
+            {
+                return "Book_PDF.joboptions";
+            }
+        }
         private PopupProgress PopupProgress { get; set; }
+        private string ProgramFilesDirectory { get; set; }
+        private string ResourceDirectory
+        {
+            get
+            {
+                int index = BaseDirectory.LastIndexOf(ApplicationName);
+
+                if (index < 0) return string.Format("{0}{1}", BaseDirectory, @"Resources\");
+
+                return string.Format("{0}{1}{2}", BaseDirectory.Remove(index, BaseDirectory.Length - index), ApplicationName, @"\Resources\");
+            }
+        }
         private bool IsAdobeApp(String name)
         {
             return (!String.IsNullOrWhiteSpace(name) && (name.Contains("photoshop") || name.Contains("indesign") || name.Contains("adobe cs")));
-        }
+        }        
         private void SearchAdobeApps()
         {
             ApplicationName = System.AppDomain.CurrentDomain.SetupInformation.ApplicationName.Replace(".exe", null);
@@ -45,8 +103,7 @@ namespace Walters
             GetAdobeApps(@"SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall");
 
             GenerateCheckList();
-        }
-        private IDictionary<string, string> AdobeApps { get; set; }
+        }        
         private string Assume64BitApp(string app, string location)
         {
             if (location.Contains("x86")) return app;
@@ -59,7 +116,6 @@ namespace Walters
 
             return "";
         }
-
         private void CheckAdobeDesignAndWebPremium(string name, string location)
         {
             IList<string> apps = new List<string>();
@@ -69,12 +125,10 @@ namespace Walters
 
             foreach (string app in apps) if (!AdobeApps.ContainsKey(app)) AdobeApps.Add(app, location);
         }
-
         private string CheckAdobeDesignAndWebPremium(string name)
         {
             return name.Replace(" Design and Web Premium", null).Replace("Adobe ", null);
         }
-
         private void GetAdobeApps(string uninstallKey)
         {
             using (RegistryKey rk = Registry.LocalMachine.OpenSubKey(uninstallKey))
@@ -103,7 +157,6 @@ namespace Walters
                 }
             }
         }
-
         private void GenerateCheckList()
         {
             if (null != AdobeApps && AdobeApps.Any())
@@ -126,7 +179,6 @@ namespace Walters
                 tabItemApplication.Header = string.Format("Adobe Applications ({0})", AdobeApps.Count);
             }
         }
-
         private string GetAdobeApp(RegistryKey sk)
         {
             try
@@ -141,13 +193,7 @@ namespace Walters
                 Console.WriteLine(ex.Message);
                 return "";
             }
-        }
-
-        private void adobeApp_Click(object sender, RoutedEventArgs e)
-        {
-            ValidateInstall();
-        }
-
+        }        
         private bool HasSelected
         {
             get
@@ -158,27 +204,36 @@ namespace Walters
             }
         }
 
-        private void tabControlApps_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        public string PDFPresetPath
         {
-            ValidateInstall();
+            get
+            {
+                return string.Concat(AdobeRoamingDirectory, @"Adobe PDF\Settings\", PDFPreset);
+            }
         }
-
         private void ValidateInstall()
         {
-            buttonContinue.IsEnabled = HasSelected && !Installed;
-            buttonInstall.IsEnabled = HasSelected && !Installed;
+            switch (ValidateInstall(true))
+            {
+                case true:
+                    buttonContinue.IsEnabled = HasSelected && !Installed;
+                    buttonInstall.IsEnabled = HasSelected && !Installed;
+                    break;
+                case false:
+                    Installed = true;
+                    break;
+            }            
         }
-
-        private void buttonContinue_Click(object sender, RoutedEventArgs e)
+        private void SetUninstall()
         {
-            if (HasSelected) tabControlApps.SelectedItem = tabItemPresets;
+            buttonInstall.Content = "Uninstall Settings";
         }
-
-        private void buttonInstall_Click(object sender, RoutedEventArgs e)
+        private bool ValidateInstall(bool check)
         {
-            PopupProgress.ShowDialog();
+            if (IO.File.Exists(ColorProfilePath)) return false;
+
+            return true;
         }
-        public bool Installed { get; set; }
         public void DisableInstall()
         {
             buttonInstall.IsEnabled = false;
@@ -190,7 +245,6 @@ namespace Walters
             Dispatcher.Invoke(() => CopyUserPDFPreset());
             Dispatcher.Invoke(() => CopyScripts());
         }
-
         private void CopyScripts()
         {
             try
@@ -202,7 +256,6 @@ namespace Walters
                 MessageBox.Show(ex.Message);
             }
         }
-
         private IList<string> GetSelectedApps()
         {
             IList<string> apps = new List<string>();
@@ -211,88 +264,38 @@ namespace Walters
 
             return apps;
         }
-
         private string GetPath(Environment.SpecialFolder kind)
         {
             return Environment.GetFolderPath(kind);
         }
-
         private void CopyStartupScripts(IList<string> apps)
         {
             foreach (string app in apps) CopyStartupScript(app.ToLower());
-        }
-        private string ProgramFilesDirectory { get; set; }
-        private string BaseDirectory { get; set; }
-        private string ApplicationName { get; set; }
-        private string ColorSettings
-        {
-            get
-            {
-                return "Book_ColorSettings.csf";
-            }
-        }
-        private string PDFPreset
-        {
-            get
-            {
-                return "Book_PDF.joboptions";
-            }
-        }
-        private string ColorProfile
-        {
-            get
-            {
-                return "GRACoL2006_Coated1v2.icc";
-            }
-        }
-        private string ResourceDirectory
-        {
-            get
-            {
-                int index = BaseDirectory.LastIndexOf(ApplicationName);
-
-                if (index < 0) return string.Format("{0}{1}", BaseDirectory, @"Resources\");
-
-                return string.Format("{0}{1}{2}", BaseDirectory.Remove(index, BaseDirectory.Length - index), ApplicationName, @"\Resources\");
-            }
-        }
-        private string AdobeRoamingDirectory
-        {
-            get
-            {
-                return string.Concat(GetPath(Environment.SpecialFolder.ApplicationData), @"\Adobe\");
-            }
-        }
-
+        }                
         private void CopySystemSettings()
         {
             string sourcePath = IO.Path.Combine(ResourceDirectory, ColorProfile);
-            string destPath = string.Concat(Environment.SystemDirectory, @"\spool\drivers\color\", ColorProfile);
 
-            IO.File.Copy(sourcePath, destPath, true);
+            IO.File.Copy(sourcePath, ColorProfilePath, true);
         }
-
-        private void SetFileSecurity(string destPath)
+        private void SetFileSecurity(string path)
         {
             FileSecurity fs = new FileSecurity();
             fs.AddAccessRule(new FileSystemAccessRule("Everyone", FileSystemRights.FullControl, AccessControlType.Allow));
 
-            IO.File.SetAccessControl(destPath, fs);
+            IO.File.SetAccessControl(path, fs);
         }
-
         private void CopyUserColorSettings()
         {
             string sourcePath = IO.Path.Combine(ResourceDirectory, ColorSettings);
-            string destPath = string.Concat(AdobeRoamingDirectory, @"Color\Settings\", ColorSettings);
 
-            IO.File.Copy(sourcePath, destPath, true);
+            IO.File.Copy(sourcePath, ColorSettingsPath, true);
         }
         private void CopyUserPDFPreset()
         {
             string sourcePath = IO.Path.Combine(ResourceDirectory, PDFPreset);
-            string destPath = string.Concat(AdobeRoamingDirectory, @"Adobe PDF\Settings\", PDFPreset);
 
-            IO.File.Copy(sourcePath, destPath, true);
+            IO.File.Copy(sourcePath, PDFPresetPath, true);
         }
         private void CopyStartupScript(string app)
         {
@@ -353,6 +356,37 @@ namespace Walters
         string GeneratePath(string app)
         {
             return string.Format("wp_{0}{1}", app.Replace(" ", "_"), ".jsx");
+        }
+        private bool Uninstall()
+        {            
+            try
+            {
+                IO.File.Delete(ColorProfilePath);
+                IO.File.Delete(ColorSettingsPath);
+                IO.File.Delete(PDFPresetPath);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(string.Format("Something went wrong while removing files in your system. {0} Error: {1}, Detailed Error: -> {2}", Environment.NewLine, ex.Message, ex.InnerException.Message), "Walter's Publishing", MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
+            return true;
+        }
+        private void adobeApp_Click(object sender, RoutedEventArgs e)
+        {
+            ValidateInstall();
+        }
+        private void buttonContinue_Click(object sender, RoutedEventArgs e)
+        {
+            if (HasSelected) tabControlApps.SelectedItem = tabItemPresets;
+        }
+        private void buttonInstall_Click(object sender, RoutedEventArgs e)
+        {
+            PopupProgress.ShowDialog();
+        }
+        private void tabControlApps_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ValidateInstall();
         }
     }
 }
