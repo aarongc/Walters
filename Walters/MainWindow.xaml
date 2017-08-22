@@ -1,0 +1,36 @@
+﻿<Window x:Class="Walters.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Walters"
+        mc:Ignorable="d"
+        Title="Walter's Publishing" Height="479" Width="663.991" ResizeMode="NoResize" Icon="favicon.ico" WindowStartupLocation="CenterScreen">
+    <TabControl x:Name="tabControlApps" HorizontalAlignment="Left" Height="417" Margin="15,18,0,0" VerticalAlignment="Top" Width="628" BorderBrush="{x:Null}" SelectionChanged="tabControlApps_SelectionChanged">
+        <TabItem x:Name="tabItemApplication" Header="Adobe Applications">
+            <Grid Margin="0,1,33,29">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="145*"/>
+                    <ColumnDefinition Width="107*"/>
+                    <ColumnDefinition Width="337*"/>
+                </Grid.ColumnDefinitions>
+                <Button x:Name="buttonContinue" Content="Continue" HorizontalAlignment="Left" Margin="188,303,0,0" VerticalAlignment="Top" Width="144" Height="50" IsDefault="True" Background="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" Foreground="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}" Cursor="Hand" Grid.Column="2" Click="buttonContinue_Click"/>
+                <StackPanel x:Name="panelApps" HorizontalAlignment="Left" Height="278" Margin="17,65,0,0" VerticalAlignment="Top" Width="398" Panel.ZIndex="1" Cursor="Hand" Grid.ColumnSpan="3"/>
+                <TextBlock HorizontalAlignment="Left" Margin="17,25,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="524" Height="20" Grid.ColumnSpan="3"><Run Text="You have "/><Run Text="the following "/><Run Text="Adobe applications installed in your machine"/><LineBreak/><Run/><LineBreak/><Run/><LineBreak/><Run/></TextBlock>
+            </Grid>
+        </TabItem>
+        <TabItem x:Name="tabItemPresets" Header="Adobe Presets">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="28*"/>
+                    <ColumnDefinition Width="7*"/>
+                    <ColumnDefinition Width="276*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock HorizontalAlignment="Left" Margin="262,35,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="287" Height="140" Grid.Column="2"><Run Text="Book PDF"/><LineBreak/><Run/><LineBreak/><Run Text="The most important ! A workspace is a color space that should be independent of a device to be neutral in all circumstances. A neutral RGB signal should show a neutral Lab color and vice versa on a calibrated monitor in such a color space."/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="12,178,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="145" Width="295" Grid.ColumnSpan="3"><Run Text="GR"/><Run Text="ACoL2006_Coated1v2"/><LineBreak/><Run/><LineBreak/><Run Text="In all cases, select : &quot;Preserve embedded profiles&quot; that is, by the way, selected by default in recent versions of Photoshop and check the three boxes below for the choice of profiles when opening files or saving . This is the only way to know where you are and to be able to decide at each processing step of the image which profile to adopt"/><Run Text="."/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="12,36,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="140" Width="286" Grid.ColumnSpan="3"><Run Text="Book Color Setting"/><LineBreak/><Run/><LineBreak/><Run Text="A good set of parameters in Photoshop is useless without the calibration of your color workflow, but the opposite is also true ! Proper color management is only possible after setting the right colors in Photoshop"/><Run Text="."/></TextBlock>
+                <Button x:Name="buttonInstall" Content="Install Settings" HorizontalAlignment="Left" Margin="375,311,0,0" VerticalAlignment="Top" Width="144" Height="50" IsDefault="True" Background="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" Foreground="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}" Cursor="Hand" Grid.Column="2" IsEnabled="False" Click="buttonInstall_Click"/>
+            </Grid>
+        </TabItem>
+    </TabControl>
+</Window>
