@@ -43,6 +43,8 @@ namespace Walters
 
             GetAdobeApps(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall");
             GetAdobeApps(@"SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall");
+
+            GenerateCheckList();
         }
         private IDictionary<string, string> AdobeApps { get; set; }
         private string Assume64BitApp(string app, string location)
@@ -65,20 +67,18 @@ namespace Walters
             apps.Add(string.Concat("Adobe Photoshop ", CheckAdobeDesignAndWebPremium(name)));
             apps.Add(string.Concat("Adobe InDesign ", CheckAdobeDesignAndWebPremium(name)));
 
-            foreach(string app in apps) AdobeApps.Add(app, location);
+            foreach (string app in apps) if (!AdobeApps.ContainsKey(app)) AdobeApps.Add(app, location);
 
             return apps;
         }
 
         private string CheckAdobeDesignAndWebPremium(string name)
         {
-            return name.Replace(" Design and Web Premium", null);
+            return name.Replace(" Design and Web Premium", null).Replace("Adobe ", null);
         }
 
         private void GetAdobeApps(string uninstallKey)
         {
-            IList<string> apps = new List<string>();
-
             using (RegistryKey rk = Registry.LocalMachine.OpenSubKey(uninstallKey))
             {
                 foreach (String skName in rk.GetSubKeyNames())
@@ -92,23 +92,25 @@ namespace Walters
                         {
                             if (null == AdobeApps) AdobeApps = new Dictionary<string, string>();
 
-                            if (name.Contains("design and web premium"))
+                            if (name.ToLower().Contains("design and web premium"))
                             {
-                                foreach(string app in CheckAdobeDesignAndWebPremium(name, location)) apps.Add(name);
+                                CheckAdobeDesignAndWebPremium(name, location);
                             }
                             else
                             {
-                                AdobeApps.Add(name, location);
-                                apps.Add(name);
+                                if (!AdobeApps.ContainsKey(name)) AdobeApps.Add(name, location);
                             }
                         }
                     }
                 }
             }
+        }
 
-            if (null != apps && apps.Any())
+        private void GenerateCheckList()
+        {
+            if (null != AdobeApps && AdobeApps.Any())
             {
-                foreach (string app in apps.OrderByDescending(x => x).ToList())
+                foreach (string app in AdobeApps.Keys.OrderByDescending(x => x).ToList())
                 {
                     CheckBox adobeApp = new CheckBox()
                     {
@@ -123,7 +125,7 @@ namespace Walters
                 }
 
                 buttonContinue.IsEnabled = true;
-                tabItemApplication.Header = string.Format("Adobe Applications ({0})", apps.Count);
+                tabItemApplication.Header = string.Format("Adobe Applications ({0})", AdobeApps.Count);
             }
         }
 
@@ -184,7 +186,7 @@ namespace Walters
             buttonInstall.IsEnabled = false;
         }
         public void StartInstallation()
-        {            
+        {
             Dispatcher.Invoke(() => CopySystemSettings());
             Dispatcher.Invoke(() => CopyUserColorSettings());
             Dispatcher.Invoke(() => CopyUserPDFPreset());
@@ -197,10 +199,10 @@ namespace Walters
             {
                 foreach (string app in GetSelectedApps()) CopyStartupScript(app.ToLower().Trim());
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
-            }            
+            }
         }
 
         private IList<string> GetSelectedApps()
@@ -220,7 +222,7 @@ namespace Walters
         private void CopyStartupScripts(IList<string> apps)
         {
             foreach (string app in apps) CopyStartupScript(app.ToLower());
-        }   
+        }
         private string ProgramFilesDirectory { get; set; }
         private string BaseDirectory { get; set; }
         private string ApplicationName { get; set; }
@@ -248,7 +250,7 @@ namespace Walters
         private string ResourceDirectory
         {
             get
-            {                
+            {
                 int index = BaseDirectory.LastIndexOf(ApplicationName);
 
                 if (index < 0) return string.Format("{0}{1}", BaseDirectory, @"Resources\");
@@ -263,11 +265,11 @@ namespace Walters
                 return string.Concat(GetPath(Environment.SpecialFolder.ApplicationData), @"\Adobe\");
             }
         }
-        
+
         private void CopySystemSettings()
         {
             string sourcePath = IO.Path.Combine(ResourceDirectory, ColorProfile);
-            string destPath = string.Concat(Environment.SystemDirectory, @"\spool\drivers\color\", ColorProfile);            
+            string destPath = string.Concat(Environment.SystemDirectory, @"\spool\drivers\color\", ColorProfile);
 
             IO.File.Copy(sourcePath, destPath, true);
         }
@@ -291,7 +293,7 @@ namespace Walters
         {
             string sourcePath = IO.Path.Combine(ResourceDirectory, PDFPreset);
             string destPath = string.Concat(AdobeRoamingDirectory, @"Adobe PDF\Settings\", PDFPreset);
-            
+
             IO.File.Copy(sourcePath, destPath, true);
         }
         private void CopyStartupScript(string app)
@@ -300,14 +302,36 @@ namespace Walters
 
             switch (app)
             {
+                case "photoshop cc 2015":
+                case "photoshop cc 2016":
                 case "photoshop cc 2017":
                     destPath = GeneratePath(app, false, @"\Adobe\Startup Scripts CC\Adobe Photoshop\");
+                    break;
+                case "photoshop cs4":
+                    destPath = GeneratePath(app, false, @"\Adobe\Startup Scripts CS6\Adobe Photoshop\");
+                    break;
+                case "photoshop cs5":
+                    destPath = GeneratePath(app, false, @"\Adobe\Startup Scripts CS6\Adobe Photoshop\");
+                    break;
+                case "photoshop cs5.5":
+                    destPath = GeneratePath(app, false, @"\Adobe\Startup Scripts CS6\Adobe Photoshop\");
                     break;
                 case "photoshop cs6":
                     destPath = GeneratePath(app, false, @"\Adobe\Startup Scripts CS6\Adobe Photoshop\");
                     break;
+                case "indesign cc 2015":
+                case "indesign cc 2016":
                 case "indesign cc 2017":
                     destPath = GeneratePath(app, false, @"\Adobe\Startup Scripts CC\Adobe InDesign\");
+                    break;
+                case "indesign cs4":
+                    destPath = GeneratePath(app, false, @"\Adobe\Startup Scripts CS4\Adobe InDesign\");
+                    break;
+                case "indesign cs5":
+                    destPath = GeneratePath(app, false, @"\Adobe\Startup Scripts CS5\Adobe InDesign\");
+                    break;
+                case "indesign cs5.5":
+                    destPath = GeneratePath(app, false, @"\Adobe\Startup Scripts CS5.5\Adobe InDesign\");
                     break;
                 case "indesign cs6":
                     destPath = GeneratePath(app, false, @"\Adobe\Startup Scripts CS6\Adobe InDesign\");
@@ -318,7 +342,7 @@ namespace Walters
             {
                 MessageBox.Show(string.Concat("app: ", app, " destination: ", destPath));
                 return;
-            }            
+            }
 
             IO.File.Copy(GeneratePath(app, true), destPath, true);
         }
