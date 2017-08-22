@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Xml.Linq;
 using IO = System.IO;
 
 namespace Walters
@@ -161,13 +162,16 @@ namespace Walters
         {
             if (null != AdobeApps && AdobeApps.Any())
             {
+                bool readOnly = ValidateInstall(true);
+
                 foreach (string app in AdobeApps.Keys.OrderByDescending(x => x).ToList())
                 {
                     CheckBox adobeApp = new CheckBox()
                     {
                         Content = app.Replace("Adobe ", null),
                         Margin = new Thickness(0, 4, 0, 4),
-                        IsChecked = true
+                        IsChecked = true,
+                        IsEnabled = readOnly
                     };
 
                     adobeApp.Click += new RoutedEventHandler(this.adobeApp_Click);
@@ -219,14 +223,17 @@ namespace Walters
                     buttonContinue.IsEnabled = HasSelected && !Installed;
                     buttonInstall.IsEnabled = HasSelected && !Installed;
                     break;
-                case false:
-                    Installed = true;
+                case false:                    
+                    SetUninstall();
                     break;
             }            
         }
         private void SetUninstall()
         {
+            Installed = true;
             buttonInstall.Content = "Uninstall Settings";
+            buttonContinue.IsEnabled = HasSelected;
+            buttonInstall.IsEnabled = HasSelected;
         }
         private bool ValidateInstall(bool check)
         {
@@ -346,6 +353,28 @@ namespace Walters
             }
 
             IO.File.Copy(GeneratePath(app, true), destPath, true);
+            AddFile(destPath);
+        }
+        private void AddFile(string path)
+        {
+            XDocument files = Files;
+            
+            files.Root.Add(new XElement("file", path));
+            files.Save(FilesPath);
+        }
+        private string FilesPath
+        {
+            get
+            {
+                return string.Concat(ResourceDirectory, "files.xml");
+            }
+        }
+        private XDocument Files
+        {
+            get
+            {
+                return XDocument.Load(FilesPath);
+            }
         }
         string GeneratePath(string app, bool isSource, string path = "")
         {
@@ -361,16 +390,29 @@ namespace Walters
         {            
             try
             {
-                IO.File.Delete(ColorProfilePath);
-                IO.File.Delete(ColorSettingsPath);
-                IO.File.Delete(PDFPresetPath);
+                XDocument files = Files;
+
+                IEnumerable<string> childList = from el in files.Root.Elements()
+                                                select el.Value;
+
+                foreach (string path in childList) Delete(path);
+                
+                Delete(ColorProfilePath);
+                Delete(ColorSettingsPath);
+                Delete(PDFPresetPath);
+
+                buttonInstall.IsEnabled = false;
             }
             catch (Exception ex)
             {
-                MessageBox.Show(string.Format("Something went wrong while removing files in your system. {0} Error: {1}, Detailed Error: -> {2}", Environment.NewLine, ex.Message, ex.InnerException.Message), "Walter's Publishing", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(string.Format("Something went wrong removing files in your system. {0} Error: {1}, Detailed Error: -> {2}", Environment.NewLine, ex.Message, ex.InnerException.Message), "Walter's Publishing", MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;
             }
             return true;
+        }
+        private void Delete(string path)
+        {
+            if (IO.File.Exists(path)) IO.File.Delete(path);
         }
         private void adobeApp_Click(object sender, RoutedEventArgs e)
         {
@@ -382,7 +424,15 @@ namespace Walters
         }
         private void buttonInstall_Click(object sender, RoutedEventArgs e)
         {
-            PopupProgress.ShowDialog();
+            switch (Installed)
+            {
+                case true:
+                    Uninstall();
+                    break;
+                case false:
+                    PopupProgress.ShowDialog();
+                    break;
+            }
         }
         private void tabControlApps_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
