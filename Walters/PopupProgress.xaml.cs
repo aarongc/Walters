@@ -36,13 +36,13 @@ namespace Walters
                 Main.Installed = true;
                 Main.DisableInstall();
 
-                MessageBox.Show("All files required has been successfully installed.", "Walter's Publishing");
+                MessageBox.Show("All required files has been successfully installed.", "Walter's Publishing", MessageBoxButton.OK, MessageBoxImage.Information);
 
                 Close();
             }
             catch(Exception ex)
             {
-                MessageBox.Show(string.Format("error -> {0}, inner error -> {1}", ex.Message, ex.InnerException.Message));
+                MessageBox.Show(string.Format("Something went wrong while installing files in your system. {0} Error: {1}, Detailed Error: -> {2}", Environment.NewLine, ex.Message, ex.InnerException.Message), "Walter's Publishing", MessageBoxButton.OK, MessageBoxImage.Error);
                 Close();
             }            
         }        

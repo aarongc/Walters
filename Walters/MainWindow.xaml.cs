@@ -60,7 +60,7 @@ namespace Walters
             return "";
         }
 
-        private IList<string> CheckAdobeDesignAndWebPremium(string name, string location)
+        private void CheckAdobeDesignAndWebPremium(string name, string location)
         {
             IList<string> apps = new List<string>();
 
@@ -68,8 +68,6 @@ namespace Walters
             apps.Add(string.Concat("Adobe InDesign ", CheckAdobeDesignAndWebPremium(name)));
 
             foreach (string app in apps) if (!AdobeApps.ContainsKey(app)) AdobeApps.Add(app, location);
-
-            return apps;
         }
 
         private string CheckAdobeDesignAndWebPremium(string name)
