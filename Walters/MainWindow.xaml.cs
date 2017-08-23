@@ -67,7 +67,7 @@ namespace Walters
                 return string.Concat(AdobeRoamingDirectory, @"Color\Settings\", ColorSettings);
             }
         }
-        public bool Installed { get; set; }
+        private bool Installed { get; set; }
         private string PDFPreset
         {
             get
@@ -241,7 +241,7 @@ namespace Walters
 
             return true;
         }
-        public void DisableInstall()
+        private void DisableInstall()
         {
             Installed = true;
             buttonContinue.IsEnabled = false;
