@@ -449,18 +449,39 @@ namespace Walters
         {
             ValidateInstall();
         }
-        private string GetDescription(string name, JObject resource)
+        private Detail GetDescription(string name, JObject resource)
         {
-            return ((string)((JValue)resource["adobePresets"][name]).Value);
-        }
+            string title = ((string)((JValue)resource["adobePresets"][name]["title"]).Value),
+                description = ((string)((JValue)resource["adobePresets"][name]["description"]).Value);
 
+            return new Detail(title, description);
+        }
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             JObject resource = JObject.Parse(File.ReadAllText(string.Concat(ResourceDirectory, "description.json")));
 
-            string colorProfile = GetDescription("colorProfile", resource),
-                colorSettings = GetDescription("colorProfile", resource),
-                pdfPresets = GetDescription("colorProfile", resource);
+            Detail colorProfile = GetDescription("colorProfile", resource),
+                colorSettings = GetDescription("colorSettings", resource),
+                pdfPresets = GetDescription("pdfPresets", resource);
+
+            textRunColorProfile.Text = colorProfile.Title;
+            textRunColorProfileDetail.Text = colorProfile.Description;
+
+            textRunColorSetting.Text = colorSettings.Title;
+            textRunColorSettingDetail.Text = colorSettings.Description;
+
+            textRunPDFPresets.Text = pdfPresets.Title;
+            textRunPDFPresetsDetail.Text = pdfPresets.Description;
+        }
+    }
+    partial class Detail
+    {
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public Detail(string title, string description)
+        {
+            Title = title;
+            Description = description;
         }
     }
 }
