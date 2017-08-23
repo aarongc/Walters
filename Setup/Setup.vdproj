@@ -27,6 +27,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_7BCD9D0A3927691D54945923C9DC6BA6"
+        "OwnerKey" = "8:_AE37660B14E54A7CBB7A597058759F38"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_9589A627D3574B95970B142BA72442B0"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -63,8 +69,20 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_F313B6FC8EA7401B837B9F28F72BAF47"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_AE37660B14E54A7CBB7A597058759F38"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_7BCD9D0A3927691D54945923C9DC6BA6"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -98,6 +116,14 @@
             "PrerequisitesLocation" = "2:1"
             "Url" = "8:"
             "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.6.1"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4.6.1 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.6.1"
+                    }
+                }
             }
         }
         "Release"
@@ -259,6 +285,37 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_7BCD9D0A3927691D54945923C9DC6BA6"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_7BCD9D0A3927691D54945923C9DC6BA6"
+                    {
+                    "Name" = "8:Newtonsoft.Json.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:Newtonsoft.Json.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_A4DE3764AD074F389BA7164359CE3D5F"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9589A627D3574B95970B142BA72442B0"
             {
             "SourcePath" = "8:..\\Walters\\Resources\\Book_PDF.joboptions"
@@ -359,6 +416,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F313B6FC8EA7401B837B9F28F72BAF47"
+            {
+            "SourcePath" = "8:..\\Walters\\bin\\Debug\\Resources\\description.json"
+            "TargetName" = "8:description.json"
+            "Tag" = "8:"
+            "Folder" = "8:_4D1A2BE1B140485DBDC6CDFF8989B0E9"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
         }
         "FileType"
         {
@@ -438,7 +515,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Setup"
         "ProductCode" = "8:{2666D0F8-A7C3-436E-9ABE-DD376F6EAEA9}"
-        "PackageCode" = "8:{41DFBDAB-5F29-49B2-AA8E-24CF3B023358}"
+        "PackageCode" = "8:{1E038667-8D01-4D88-BC5D-A0FBB87E18A6}"
         "UpgradeCode" = "8:{78EEA87D-B5BF-40A5-A9DC-7C3A79F0900C}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"

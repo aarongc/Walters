@@ -458,20 +458,30 @@ namespace Walters
         }
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            JObject resource = JObject.Parse(File.ReadAllText(string.Concat(ResourceDirectory, "description.json")));
+            InitDetail();
+        }
+        private void InitDetail()
+        {
+            try
+            {
+                JObject resource = JObject.Parse(File.ReadAllText(string.Concat(ResourceDirectory, "description.json")));
 
-            Detail colorProfile = GetDescription("colorProfile", resource),
-                colorSettings = GetDescription("colorSettings", resource),
-                pdfPresets = GetDescription("pdfPresets", resource);
+                Detail colorProfile = GetDescription("colorProfile", resource),
+                    colorSettings = GetDescription("colorSettings", resource),
+                    pdfPresets = GetDescription("pdfPresets", resource);
 
-            textRunColorProfile.Text = colorProfile.Title;
-            textRunColorProfileDetail.Text = colorProfile.Description;
+                textRunColorProfile.Text = colorProfile.Title;
+                textRunColorProfileDetail.Text = colorProfile.Description;
 
-            textRunColorSetting.Text = colorSettings.Title;
-            textRunColorSettingDetail.Text = colorSettings.Description;
+                textRunColorSetting.Text = colorSettings.Title;
+                textRunColorSettingDetail.Text = colorSettings.Description;
 
-            textRunPDFPresets.Text = pdfPresets.Title;
-            textRunPDFPresetsDetail.Text = pdfPresets.Description;
+                textRunPDFPresets.Text = pdfPresets.Title;
+                textRunPDFPresetsDetail.Text = pdfPresets.Description;
+            } catch (Exception ex)
+            {
+                MessageBox.Show(string.Format("Something went wrong initializing the application. {0} Please contact your system administrator. {0}{0} Error: {1}", Environment.NewLine, ex.Message), "Walter's Publishing", MessageBoxButton.OK, MessageBoxImage.Error);
+            }            
         }
     }
     partial class Detail
