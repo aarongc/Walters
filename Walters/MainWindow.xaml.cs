@@ -1,6 +1,8 @@
 ﻿using Microsoft.Win32;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.AccessControl;
 using System.Text;
@@ -67,7 +69,7 @@ namespace Walters
                 return string.Concat(AdobeRoamingDirectory, @"Color\Settings\", ColorSettings);
             }
         }
-        private bool Installed { get; set; }
+        public bool Installed { get; set; }
         private string PDFPreset
         {
             get
@@ -237,7 +239,7 @@ namespace Walters
         }
         private bool ValidateInstall(bool check)
         {
-            if (IO.File.Exists(ColorProfilePath)) return false;
+            if (File.Exists(ColorProfilePath)) return false;
 
             return true;
         }
@@ -287,26 +289,26 @@ namespace Walters
         {
             string sourcePath = IO.Path.Combine(ResourceDirectory, ColorProfile);
 
-            IO.File.Copy(sourcePath, ColorProfilePath, true);
+            File.Copy(sourcePath, ColorProfilePath, true);
         }
         private void SetFileSecurity(string path)
         {
             FileSecurity fs = new FileSecurity();
             fs.AddAccessRule(new FileSystemAccessRule("Everyone", FileSystemRights.FullControl, AccessControlType.Allow));
 
-            IO.File.SetAccessControl(path, fs);
+            File.SetAccessControl(path, fs);
         }
         private void CopyUserColorSettings()
         {
             string sourcePath = IO.Path.Combine(ResourceDirectory, ColorSettings);
 
-            IO.File.Copy(sourcePath, ColorSettingsPath, true);
+            File.Copy(sourcePath, ColorSettingsPath, true);
         }
         private void CopyUserPDFPreset()
         {
             string sourcePath = IO.Path.Combine(ResourceDirectory, PDFPreset);
 
-            IO.File.Copy(sourcePath, PDFPresetPath, true);
+            File.Copy(sourcePath, PDFPresetPath, true);
         }
         private void CopyStartupScript(string app)
         {
@@ -356,7 +358,7 @@ namespace Walters
                 return;
             }
 
-            IO.File.Copy(GeneratePath(app, true, true), destPath, true);
+            File.Copy(GeneratePath(app, true, true), destPath, true);
             AddFile(destPath);
         }
         private void AddFile(string path)
@@ -421,7 +423,7 @@ namespace Walters
         }
         private void Delete(string path)
         {
-            if (IO.File.Exists(path)) IO.File.Delete(path);
+            if (File.Exists(path)) File.Delete(path);
         }
         private void adobeApp_Click(object sender, RoutedEventArgs e)
         {
@@ -446,6 +448,19 @@ namespace Walters
         private void tabControlApps_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ValidateInstall();
+        }
+        private string GetDescription(string name, JObject resource)
+        {
+            return ((string)((JValue)resource["adobePresets"][name]).Value);
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            JObject resource = JObject.Parse(File.ReadAllText(string.Concat(ResourceDirectory, "description.json")));
+
+            string colorProfile = GetDescription("colorProfile", resource),
+                colorSettings = GetDescription("colorProfile", resource),
+                pdfPresets = GetDescription("colorProfile", resource);
         }
     }
 }

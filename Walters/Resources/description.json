@@ -1,0 +1,7 @@
+{
+  "adobePresets": {
+    "colorProfile": "In all cases, select : \"Preserve embedded profiles\" that is, by the way, selected by default in recent versions of Photoshop and check the three boxes below for the choice of profiles when opening files or saving . This is the only way to know where you are and to be able to decide at each processing step of the image which profile to adopt.",
+    "colorSettings": "A good set of parameters in Photoshop is useless without the calibration of your color workflow, but the opposite is also true ! Proper color management is only possible after setting the right colors in Photoshop.",
+    "pdfPresets": "The most important ! A workspace is a color space that should be independent of a device to be neutral in all circumstances. A neutral RGB signal should show a neutral Lab color and vice versa on a calibrated monitor in such a color space."
+  }
+}
