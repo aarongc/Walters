@@ -114,15 +114,15 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <Resource Include="Resources\Book_ColorSettings.csf">
+    <EmbeddedResource Include="Resources\Book_ColorSettings.csf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\Book_PDF.joboptions">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Book_PDF.joboptions">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\GRACoL2006_Coated1v2.icc">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\GRACoL2006_Coated1v2.icc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -131,17 +131,17 @@
     <Resource Include="favicon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\files.xml">
+    <EmbeddedResource Include="Resources\files.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\jsx\wp_indesign.jsx">
+    <EmbeddedResource Include="Resources\jsx\wp_indesign.jsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\jsx\wp_photoshop.jsx">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\jsx\wp_photoshop.jsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

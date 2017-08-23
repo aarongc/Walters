@@ -39,7 +39,7 @@ namespace Walters
             }
             catch(Exception ex)
             {
-                MessageBox.Show(string.Format("Something went wrong while applying settings in your system. {0} Error: {1}, Detailed Error: -> {2}", Environment.NewLine, ex.Message, ex.InnerException.Message), "Walter's Publishing", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(string.Format("Something went wrong while applying settings in your system. {0} Error: {1}", Environment.NewLine, ex.Message), "Walter's Publishing", MessageBoxButton.OK, MessageBoxImage.Error);
                 Close();
             }            
         }        
