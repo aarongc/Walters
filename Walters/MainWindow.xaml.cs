@@ -243,6 +243,8 @@ namespace Walters
         }
         public void DisableInstall()
         {
+            Installed = true;
+            buttonContinue.IsEnabled = false;
             buttonInstall.IsEnabled = false;
         }
         public void StartInstallation()
@@ -257,10 +259,12 @@ namespace Walters
             try
             {
                 foreach (string app in GetSelectedApps()) CopyStartupScript(app.ToLower().Trim());
+                                
+                DisableInstall();
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(string.Format("Something went wrong applying settings in your system. {0}{0} Error: {1}", Environment.NewLine, ex.Message), "Walter's Publishing", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
         private IList<string> GetSelectedApps()
@@ -313,36 +317,36 @@ namespace Walters
                 case "photoshop cc 2015":
                 case "photoshop cc 2016":
                 case "photoshop cc 2017":
-                    destPath = GeneratePath(app, false, @"\Adobe\Startup Scripts CC\Adobe Photoshop\");
+                    destPath = GeneratePath(app, false, true, @"\Adobe\Startup Scripts CC\Adobe Photoshop\");
                     break;
                 case "photoshop cs4":
-                    destPath = GeneratePath(app, false, @"\Adobe\Startup Scripts CS6\Adobe Photoshop\");
+                    destPath = GeneratePath(app, false, true, @"\Adobe\Startup Scripts CS6\Adobe Photoshop\");
                     break;
                 case "photoshop cs5":
-                    destPath = GeneratePath(app, false, @"\Adobe\Startup Scripts CS6\Adobe Photoshop\");
+                    destPath = GeneratePath(app, false, true, @"\Adobe\Startup Scripts CS6\Adobe Photoshop\");
                     break;
                 case "photoshop cs5.5":
-                    destPath = GeneratePath(app, false, @"\Adobe\Startup Scripts CS6\Adobe Photoshop\");
+                    destPath = GeneratePath(app, false, true, @"\Adobe\Startup Scripts CS6\Adobe Photoshop\");
                     break;
                 case "photoshop cs6":
-                    destPath = GeneratePath(app, false, @"\Adobe\Startup Scripts CS6\Adobe Photoshop\");
+                    destPath = GeneratePath(app, false, true, @"\Adobe\Startup Scripts CS6\Adobe Photoshop\");
                     break;
                 case "indesign cc 2015":
                 case "indesign cc 2016":
                 case "indesign cc 2017":
-                    destPath = GeneratePath(app, false, @"\Adobe\Startup Scripts CC\Adobe InDesign\");
+                    destPath = GeneratePath(app, false, false, @"\Adobe\Startup Scripts CC\Adobe InDesign\");
                     break;
                 case "indesign cs4":
-                    destPath = GeneratePath(app, false, @"\Adobe\Startup Scripts CS4\Adobe InDesign\");
+                    destPath = GeneratePath(app, false, false, @"\Adobe\Startup Scripts CS4\Adobe InDesign\");
                     break;
                 case "indesign cs5":
-                    destPath = GeneratePath(app, false, @"\Adobe\Startup Scripts CS5\Adobe InDesign\");
+                    destPath = GeneratePath(app, false, false, @"\Adobe\Startup Scripts CS5\Adobe InDesign\");
                     break;
                 case "indesign cs5.5":
-                    destPath = GeneratePath(app, false, @"\Adobe\Startup Scripts CS5.5\Adobe InDesign\");
+                    destPath = GeneratePath(app, false, false, @"\Adobe\Startup Scripts CS5.5\Adobe InDesign\");
                     break;
                 case "indesign cs6":
-                    destPath = GeneratePath(app, false, @"\Adobe\Startup Scripts CS6\Adobe InDesign\");
+                    destPath = GeneratePath(app, false, false, @"\Adobe\Startup Scripts CS6\Adobe InDesign\");
                     break;
             }
 
@@ -352,7 +356,7 @@ namespace Walters
                 return;
             }
 
-            IO.File.Copy(GeneratePath(app, true), destPath, true);
+            IO.File.Copy(GeneratePath(app, true, true), destPath, true);
             AddFile(destPath);
         }
         private void AddFile(string path)
@@ -376,17 +380,23 @@ namespace Walters
                 return XDocument.Load(FilesPath);
             }
         }
-        string GeneratePath(string app, bool isSource, string path = "")
+        string GeneratePath(string app, bool isSource, bool isPhotoshop, string path = "")
         {
-            if (isSource) return string.Concat(ResourceDirectory, @"jsx\", GeneratePath(app));
+            if (isSource) return GeneratePath(isPhotoshop);
 
             return string.Concat(ProgramFilesDirectory, path, GeneratePath(app));
         }
+        string GeneratePath(bool isPhotoshop)
+        {
+            if (isPhotoshop) return string.Concat(ResourceDirectory, @"jsx\wp_photoshop.jsx");
+            
+            return string.Concat(ResourceDirectory, @"jsx\wp_indesign.jsx");
+        }        
         string GeneratePath(string app)
         {
             return string.Format("wp_{0}{1}", app.Replace(" ", "_"), ".jsx");
         }
-        private bool Uninstall()
+        private void Uninstall()
         {            
             try
             {
@@ -402,13 +412,12 @@ namespace Walters
                 Delete(PDFPresetPath);
 
                 buttonInstall.IsEnabled = false;
+                MessageBox.Show("All settings has been successfully removed from your system.", "Walter's Publishing", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show(string.Format("Something went wrong removing files in your system. {0} Error: {1}, Detailed Error: -> {2}", Environment.NewLine, ex.Message, ex.InnerException.Message), "Walter's Publishing", MessageBoxButton.OK, MessageBoxImage.Error);
-                return false;
+                MessageBox.Show(string.Format("Something went wrong removing settings in your system. {0}{0} Error: {1}", Environment.NewLine, ex.Message), "Walter's Publishing", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-            return true;
         }
         private void Delete(string path)
         {
